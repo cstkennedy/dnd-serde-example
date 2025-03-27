@@ -4,6 +4,8 @@ use std::io::{BufReader, Read};
 use clap::{Parser, ValueEnum};
 use eyre::{self, WrapErr};
 use toml::{Table, Value};
+use serde_json;
+use serde_yml;
 
 use dnd_serde_example::*;
 
@@ -20,6 +22,8 @@ enum DemoMode {
     Table,
     Derive,
     ConvertToRon,
+    ConvertToJson,
+    ConvertToYaml,
 }
 
 fn main() -> eyre::Result<()> {
@@ -66,6 +70,22 @@ fn main() -> eyre::Result<()> {
             println!(
                 "{}",
                 ron::ser::to_string_pretty(&parsed_char_toml, ron::ser::PrettyConfig::default())?,
+            );
+        }
+        DemoMode::ConvertToJson => {
+            let parsed_char_toml: CharacterTOML = toml::from_str(&raw_toml_str)?;
+
+            println!(
+                "{:#}",
+                serde_json::to_string_pretty(&parsed_char_toml)?,
+            );
+        }
+        DemoMode::ConvertToYaml => {
+            let parsed_char_toml: CharacterTOML = toml::from_str(&raw_toml_str)?;
+
+            println!(
+                "{:#}",
+                serde_yml::to_string(&parsed_char_toml)?,
             );
         }
     }
